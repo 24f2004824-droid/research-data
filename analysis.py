@@ -24,10 +24,11 @@ How to run:
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from IPython.display import display, Markdown, clear_output
-import ipywidgets as widgets
+import marimo as mo
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
-# Make plotting inline-friendly. These are global objects used later.
 plt.rcParams['figure.figsize'] = (8, 4)
 
 # %%
@@ -65,38 +66,10 @@ print(df.head())
 
 # %%
 # --- Cell 3: interactive controls and variable dependencies ---
-# Purpose: create widgets that control analysis parameters.
-# Downstream computations depend on widget values (e.g., `threshold_slider.value`).
+# Using marimo interactive slider
 
-# Slider will control the x threshold used to split/filter the dataset.
-threshold_slider = widgets.FloatSlider(
-    value=50.0,
-    min=float(df['x'].min()),
-    max=float(df['x'].max()),
-    step=0.5,
-    description='x threshold',
-    continuous_update=True
-)
-
-# Dropdown to choose aggregation function
-agg_dropdown = widgets.Dropdown(
-    options=['mean', 'median', 'count'],
-    value='mean',
-    description='Aggregate'
-)
-
-controls = widgets.HBox([threshold_slider, agg_dropdown])
-
-# The filtered_df function depends on df and threshold_slider.value
-def compute_filtered_df(threshold: float):
-    """Return a filtered DataFrame and an aggregated summary.
-
-    Data flow:
-    - Input: df (global) and threshold (widget value)
-    - Output: filtered subset `fdf` and an aggregate value `agg_val`
-    """
-    fdf = df[df['x'] >= threshold].copy()
-    return fdf
+threshold_slider = mo.ui.slider(min=float(df['x'].min()), max=float(df['x'].max()), value=50.0, step=0.5, label='x threshold')
+agg_dropdown = mo.ui.dropdown({'mean':'mean','median':'median','count':'count'}, value='mean', label='Aggregate')
 
 # %%
 # --- Cell 4: dynamic display (plot + markdown) that reacts to widgets ---
